@@ -6,6 +6,10 @@ const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
 const cTable = require('console.table');
+const chalk = require('chalk');
+const clear = require('clear');
+const figlet = require('figlet');
+
 
 // Create express app instance.
 var app = express();
@@ -67,10 +71,9 @@ function chooseTable() {
                 break;
         }
     })
-}
+};
 
-// and to create objects for each team member (using the correct classes as blueprints!)
-//Used to ask more questions about the manager employee and generate the html
+
 function deptTable() {
     inquirer.prompt([
         {
@@ -98,7 +101,7 @@ function deptTable() {
                 break;
         }
     })
-}
+};
 
 function roleTable() {
     inquirer.prompt([
@@ -128,7 +131,7 @@ function roleTable() {
                 break;
         }
     })
-}
+};
 
 function employeeTable() {
     inquirer.prompt([
@@ -136,7 +139,7 @@ function employeeTable() {
             type: "list",
             name: "whichFunction",
             message: "Please select which function:",
-            choices: ["View Employees", "Add Employee", "Return To Main"]
+            choices: ["View Employees", "Update Employee Role", "Add Employee", "Delete Employee", "Return To Main"]
         }
     ]).then((data) => {
         const { whichFunction } = data
@@ -147,19 +150,25 @@ function employeeTable() {
             case "View Employees":
                 viewEmployeeTable()
                 break;
+            case "Update Employee Role":
+                updateEmployeeTable()
+                break;
             case "Add Employee":
                 addEmployeeTable()
                 break;
             case "Return To Main":
                 chooseTable()
                 break;
+            case "Delete Employee":
+                displayEmpsToDelete()
+                break;
             default:
                 break;
         }
     })
-}
+};
 
-
+//ADD TO TABLES
 function addDeptTable() {
     inquirer.prompt([
 
@@ -194,7 +203,6 @@ function addDeptTable() {
     })
 };
 
-//title,salary,deptid
 function addRoleTable() {
 
     inquirer.prompt([
@@ -245,7 +253,6 @@ function addRoleTable() {
 };
 
 
-//first_name,last_name,role_id,manager_id
 function addEmployeeTable() {
 
     inquirer.prompt([
@@ -303,6 +310,7 @@ function addEmployeeTable() {
 };
 
 
+
 function viewDeptTable() {
     console.log("Viewing all Depts...\n");
     connection.query("SELECT * FROM department", function (err, res) {
@@ -313,7 +321,7 @@ function viewDeptTable() {
 
     });
 
-}
+};
 
 function viewRoleTable() {
     console.log("Viewing all Roles...\n");
@@ -325,7 +333,7 @@ function viewRoleTable() {
 
     });
 
-}
+};
 
 function viewEmployeeTable() {
     console.log("Viewing all employees...\n");
@@ -337,17 +345,142 @@ function viewEmployeeTable() {
 
     });
 
-}
+};
 
 function doneEntering() {
 
 
-    console.log("Ending...")
+    process.exit();
 
-}
+};
+
+
+function displayEmpsToDelete() {
+    connection.query(`SELECT  * FROM employee UNION SELECT 0,'GO', 'BACK',0,0`, function (err, data) {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: "list",
+                message: "Choose an employee to delete:",
+                name: "whichEmployee",
+                type: "list",
+                choices: function () {
+                    var updateArray = [];
+                    for (var i = 0; i < res.length; i++) {
+                        updateArray.push(res[i].id + "   |-" + res[i].first_name + " " + res[i].last_name);
+                    }
+                    return updateArray;
+                }
+
+            }
+        ])
+            .then(function (data) {
+                const { whichEmployee } = data
+
+                var deleteThisOne = parseInt(whichEmployee.substring(0, 5))
+                if (deleteThisOne === 0) { employeeTable() }
+                else {
+
+                    connection.query(
+                        "DELETE FROM employee WHERE ?",
+                        {
+                            id: parseInt(whichEmployee.substring(0, 2))
+                        },
+                        function (err, res) {
+                            if (err) throw err;
+                            console.log(res.affectedRows + " employee deleted!\n");
+                            // Call readProducts AFTER the DELETE completes
+                            employeeTable()
+                        })
 
 
 
+                }
+
+
+
+
+
+
+            });
+    });
+};
+
+
+
+
+
+
+
+
+
+
+function addEmployeeTable() {
+
+    inquirer.prompt([
+
+        {
+            type: "input",
+            name: "first_name",
+            message: "First Name:"
+
+        },
+        {
+            type: "input",
+            name: "last_name",
+            message: "Last Name:"
+
+        },
+        {
+            type: "input",
+            name: "role_id",
+            message: "Role ID:"
+
+        },
+        {
+            type: "input",
+            name: "manager_id",
+            message: "Manager ID:"
+
+        }
+
+    ]).then(function (answer) {
+
+
+        console.log(answer)
+
+        var query = connection.query(
+            "INSERT INTO employee SET ?",
+            {
+                first_name: answer.first_name,
+                last_name: answer.last_name,
+                role_id: answer.role_id,
+                manager_id: answer.manager_id
+            },
+            function (err, res) {
+                if (err) throw err;
+                console.log(res.affectedRows + " employee inserted!\n");
+                // Call updateProduct AFTER the INSERT completes
+                viewEmployeeTable()
+
+            }
+        );
+
+    }
+    )
+};
+
+
+
+
+//Code adapted from https://morioh.com/p/a9514e994de1
+clear()
+console.log(
+    chalk.yellow(
+        figlet.textSync('Employee Tracker', { horizontalLayout: 'full' })
+    )
+);
+//End code adaptation
 
 
 //Used start to run the full application
