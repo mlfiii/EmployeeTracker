@@ -9,6 +9,8 @@ const cTable = require('console.table');
 const chalk = require('chalk');
 const clear = require('clear');
 const figlet = require('figlet');
+// const deptTableJS = require('./deptTable');
+const chooseTable = require('./chooseTable');
 
 
 // Create express app instance.
@@ -41,67 +43,74 @@ let employees = []
 
 // Write code to use inquirer to gather information about the development team members,
 //Used to ask questions about employees
-function chooseTable() {
-    inquirer.prompt([
-        {
-            type: "list",
-            name: "whichTable",
-            message: "Please select which table:",
-            choices: ["Dept", "Role", "Employee", "Exit"]
-        }
-    ]).then((data) => {
-        const { whichTable } = data
+// function chooseTable() {
+//     inquirer.prompt([
+//         {
+//             type: "list",
+//             name: "whichTable",
+//             message: "Please select which table:",
+//             choices: ["Dept", "Role", "Employee", "Exit"]
+//         }
+//     ]).then((data) => {
+//         const { whichTable } = data
 
 
-        switch (whichTable) {
+//         switch (whichTable) {
 
-            case "Dept":
-                deptTable()
-                break;
-            case "Role":
-                roleTable()
-                break;
-            case "Employee":
-                employeeTable()
-                break;
-            case "Exit":
-                doneEntering()
-                break;
-            default:
-                break;
-        }
-    })
-};
-
-
-function deptTable() {
-    inquirer.prompt([
-        {
-            type: "list",
-            name: "whichFunction",
-            message: "Please select which function:",
-            choices: ["View Depts", "Add Depts", "Return To Main"]
-        }
-    ]).then((data) => {
-        const { whichFunction } = data
+//             case "Dept":
+//                 deptTableJS.deptTable();
+//                 break;
+//             case "Role":
+//                 roleTable()
+//                 break;
+//             case "Employee":
+//                 employeeTable()
+//                 break;
+//             case "Exit":
+//                 doneEntering()
+//                 break;
+//             default:
+//                 break;
+//         }
+//     })
+// };
 
 
-        switch (whichFunction) {
+// function deptTable() {
+//     inquirer.prompt([
+//         {
+//             type: "list",
+//             name: "whichFunction",
+//             message: "Please select which function:",
+//             choices: ["View Depts", "Delete Dept", "Add Depts", "Return To Main"]
+//         }
+//     ]).then((data) => {
+//         const { whichFunction } = data
 
-            case "View Depts":
-                viewDeptTable()
-                break;
-            case "Add Depts":
-                addDeptTable()
-                break;
-            case "Return To Main":
-                chooseTable()
-                break;
-            default:
-                break;
-        }
-    })
-};
+
+//         switch (whichFunction) {
+
+//             case "View Depts":
+//                 returnToMain();
+//                 viewDeptTable()
+
+//                 break;
+//             case "Add Depts":
+//                 addDeptTable()
+//                 break;
+//             case "Delete Dept":
+//                 returnToMain();
+//                 displayDeptToDelete();
+//                 break;
+//             case "Return To Main":
+//                 returnToMain();
+//                 chooseTable()
+//                 break;
+//             default:
+//                 break;
+//         }
+//     })
+// };
 
 function roleTable() {
     inquirer.prompt([
@@ -109,7 +118,7 @@ function roleTable() {
             type: "list",
             name: "whichFunction",
             message: "Please select which function:",
-            choices: ["View Roles", "Add Roles", "Return To Main"]
+            choices: ["View Roles", "Add Roles", "Delete Role", "Return To Main"]
         }
     ]).then((data) => {
         const { whichFunction } = data
@@ -118,14 +127,19 @@ function roleTable() {
         switch (whichFunction) {
 
             case "View Roles":
+                returnToMain();
                 viewRoleTable()
                 break;
             case "Add Roles":
 
                 addRoleTable();
                 break;
+            case "Delete Role":
+                returnToMain();
+                displayRoleToDelete()
             case "Return To Main":
-                chooseTable()
+                returnToMain();
+                chooseTable.chooseTable()
                 break;
             default:
                 break;
@@ -148,16 +162,19 @@ function employeeTable() {
         switch (whichFunction) {
 
             case "View Employees":
+                returnToMain();
                 viewEmployeeTable()
                 break;
             case "Update Employee Role":
-                updateEmployeeTable()
+                returnToMain();
+                displayEmpsToUpdate()
                 break;
             case "Add Employee":
                 addEmployeeTable()
                 break;
             case "Return To Main":
-                chooseTable()
+                returnToMain();
+                chooseTable.chooseTable()
                 break;
             case "Delete Employee":
                 displayEmpsToDelete()
@@ -168,40 +185,40 @@ function employeeTable() {
     })
 };
 
-//ADD TO TABLES
-function addDeptTable() {
-    inquirer.prompt([
+// //ADD TO TABLES
+// function addDeptTable() {
+//     inquirer.prompt([
 
-        {
-            type: "input",
-            name: "name",
-            message: "Dept name:"
-        }
+//         {
+//             type: "input",
+//             name: "name",
+//             message: "Dept name:"
+//         }
 
-    ]).then(function (answer) {
+//     ]).then(function (answer) {
 
-        console.log(answer)
+//         console.log(answer)
 
-        console.log("Inserting a new dept...\n");
-        var query = connection.query(
-            "INSERT INTO department SET ?",
-            {
-                name: answer.name
-            },
-            function (err, res) {
-                if (err) throw err;
-                console.log(res.affectedRows + " dept inserted!\n");
-                // Call updateProduct AFTER the INSERT completes
-                viewDeptTable()
-                deptTable()
+//         console.log("Inserting a new dept...\n");
+//         var query = connection.query(
+//             "INSERT INTO department SET ?",
+//             {
+//                 name: answer.name
+//             },
+//             function (err, res) {
+//                 if (err) throw err;
+//                 console.log(res.affectedRows + " dept inserted!\n");
+//                 // Call updateProduct AFTER the INSERT completes
+//                 viewDeptTable()
+//                 deptTable()
 
-            }
-        );
+//             }
+//         );
 
 
 
-    })
-};
+//     })
+// };
 
 function addRoleTable() {
 
@@ -311,17 +328,7 @@ function addEmployeeTable() {
 
 
 
-function viewDeptTable() {
-    console.log("Viewing all Depts...\n");
-    connection.query("SELECT * FROM department", function (err, res) {
-        if (err) throw err;
-        // Log all results of the SELECT statement
-        console.table(res);
-        deptTable()
 
-    });
-
-};
 
 function viewRoleTable() {
     console.log("Viewing all Roles...\n");
@@ -349,9 +356,121 @@ function viewEmployeeTable() {
 
 function doneEntering() {
 
-
+    connection.end();
     process.exit();
 
+};
+
+function displayDeptToDelete() {
+    connection.query(`SELECT  * FROM department UNION SELECT 0,'GO BACK'`, function (err, data) {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: "list",
+                message: "Choose a department to delete:",
+                name: "whichDepartment",
+                type: "list",
+                choices: function () {
+                    var updateArray = [];
+                    for (var i = 0; i < data.length; i++) {
+                        updateArray.push(data[i].id + "   |-" + data[i].name);
+                    }
+                    return updateArray;
+                }
+
+            }
+        ])
+            .then(function (data) {
+                const { whichDepartment } = data
+
+                var deleteThisOne = parseInt(whichDepartment.substring(0, 5))
+                if (deleteThisOne === 0) { deptTable() }
+                else {
+
+                    connection.query(
+                        "DELETE FROM department WHERE ?",
+                        {
+                            id: parseInt(whichDepartment.substring(0, 2))
+                        },
+                        function (err, res) {
+                            if (err) throw err;
+                            console.log(res.affectedRows + " department(s) deleted!\n");
+                            // Call readProducts AFTER the DELETE completes
+                            deptTable()
+                        })
+
+
+
+                }
+
+
+
+
+
+
+            });
+    });
+};
+
+// -- role:
+// -- id - INT PRIMARY KEY
+// -- title -  VARCHAR(30) to hold role title
+// -- salary -  DECIMAL to hold role salary
+// -- department_id -  INT to hold reference to department role belongs to
+
+function displayRoleToDelete() {
+    connection.query(`SELECT  * FROM role UNION SELECT 0,'GO BACK',0,0`, function (err, data) {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: "list",
+                message: "Choose a role to delete:",
+                name: "whichRole",
+                type: "list",
+                choices: function () {
+                    var updateArray = [];
+                    for (var i = 0; i < data.length; i++) {
+                        updateArray.push(data[i].id + "   |-" + data[i].title);
+                    }
+                    return updateArray;
+                }
+
+            }
+        ])
+            .then(function (data) {
+                const { whichRole } = data
+
+                var deleteThisOne = parseInt(whichRole.substring(0, 5))
+                if (deleteThisOne === 0) { roleTable() }
+                else {
+
+                    connection.query(
+                        "DELETE FROM role WHERE ?",
+                        {
+                            id: parseInt(whichRole.substring(0, 2))
+                        },
+                        function (err, res) {
+                            if (err) {
+                                console.log(err);
+                                throw err;
+                                roleTable()
+                            };
+                            console.log(res.affectedRows + " role(s) deleted!\n");
+                            // Call readProducts AFTER the DELETE completes
+                            roleTable()
+                        })
+
+
+
+                }
+
+
+
+
+
+
+            });
+    });
 };
 
 
@@ -366,8 +485,8 @@ function displayEmpsToDelete() {
                 type: "list",
                 choices: function () {
                     var updateArray = [];
-                    for (var i = 0; i < res.length; i++) {
-                        updateArray.push(res[i].id + "   |-" + res[i].first_name + " " + res[i].last_name);
+                    for (var i = 0; i < data.length; i++) {
+                        updateArray.push(data[i].id + "   |-" + data[i].first_name + " " + data[i].last_name);
                     }
                     return updateArray;
                 }
@@ -387,7 +506,10 @@ function displayEmpsToDelete() {
                             id: parseInt(whichEmployee.substring(0, 2))
                         },
                         function (err, res) {
-                            if (err) throw err;
+                            if (err) {
+                                throw err
+
+                            };
                             console.log(res.affectedRows + " employee deleted!\n");
                             // Call readProducts AFTER the DELETE completes
                             employeeTable()
@@ -408,6 +530,70 @@ function displayEmpsToDelete() {
 
 
 
+
+
+function displayEmpsToUpdate() {
+    connection.query(`SELECT  * FROM employee UNION SELECT 0,'GO', 'BACK',0,0`, function (err, data) {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: "list",
+                message: "Choose an employee role to update:",
+                name: "whichEmployee",
+                type: "list",
+                choices: function () {
+                    var updateArray = [];
+                    for (var i = 0; i < data.length; i++) {
+                        updateArray.push(data[i].id + "   |-" + data[i].first_name + " " + data[i].last_name);
+                    }
+                    return updateArray;
+                }
+
+            },
+            {
+                type: "input",
+                name: "role_id",
+                message: "New Role ID:"
+
+            }
+        ])
+            .then(function (data) {
+                const { whichEmployee } = data
+                const { role_id } = data
+                var deleteThisOne = parseInt(whichEmployee.substring(0, 5))
+                if (deleteThisOne === 0) { employeeTable() }
+                else {
+
+
+                    connection.query(
+                        "UPDATE employee SET ? WHERE ? ",
+                        [{
+                            role_id: role_id
+                        }, {
+                            id: parseInt(whichEmployee.substring(0, 2))
+                        }],
+                        function (err, res) {
+                            if (err) {
+                                throw err
+
+                            };
+                            console.log(res.affectedRows + " employee updated!\n");
+                            // Call readProducts AFTER the DELETE completes
+                            employeeTable()
+                        })
+
+
+
+                }
+
+
+
+
+
+
+            });
+    });
+};
 
 
 
@@ -472,16 +658,22 @@ function addEmployeeTable() {
 
 
 
+function returnToMain() {
 
-//Code adapted from https://morioh.com/p/a9514e994de1
-clear()
-console.log(
-    chalk.yellow(
-        figlet.textSync('Employee Tracker', { horizontalLayout: 'full' })
-    )
-);
-//End code adaptation
+    //Code adapted from https://morioh.com/p/a9514e994de1
+    clear()
+    console.log(
+        chalk.yellow(
+            figlet.textSync('Employee Tracker', { horizontalLayout: 'full' })
+        )
+    );
+    //End code adaptation
+
+}
+
+
 
 
 //Used start to run the full application
-chooseTable()
+returnToMain();
+chooseTable.chooseTable();
