@@ -16,7 +16,7 @@ function chooseTable() {
         switch (whichTable) {
 
             case "Dept":
-                deptTableJS.deptTable();
+                deptTableJS.deptTable(chooseTable);
                 break;
             case "Role":
                 roleTable()
