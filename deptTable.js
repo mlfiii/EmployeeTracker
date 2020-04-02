@@ -29,12 +29,15 @@ const deptTable = (chooseTable, connection, returnToMain) => {
         switch (whichFunction) {
 
             case "View Depts":
+                returnToMain();
                 viewDeptTable(chooseTable, connection, returnToMain)
                 break;
             case "Add Depts":
+                // returnToMain();
                 addDeptTable(chooseTable, connection, returnToMain)
                 break;
             case "Delete Dept":
+                returnToMain();
                 displayDeptToDelete(chooseTable, connection, returnToMain)
                 break;
             case "Return To Main":
@@ -71,9 +74,11 @@ function addDeptTable(chooseTable, connection, returnToMain) {
             },
             function (err, res) {
                 if (err) throw err;
+                returnToMain();
                 console.log(res.affectedRows + " dept inserted!\n");
                 // Call updateProduct AFTER the INSERT completes
-                viewDeptTable(chooseTable, connection, returnToMain)
+                // viewDeptTable(chooseTable, connection, returnToMain)
+
                 deptTable(chooseTable, connection, returnToMain)
 
             }
@@ -130,8 +135,9 @@ function displayDeptToDelete(chooseTable, connection, returnToMain) {
                         },
                         function (err, res) {
                             if (err) throw err;
+                            returnToMain();
                             console.log(res.affectedRows + " department(s) deleted!\n");
-                            // Call readProducts AFTER the DELETE completes
+
                             deptTable(chooseTable, connection, returnToMain)
                         })
 

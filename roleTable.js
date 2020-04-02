@@ -30,7 +30,7 @@ const roleTable = (chooseTable, connection, returnToMain) => {
 
             case "View Roles":
                 returnToMain();
-                viewRoleTable(chooseTable, connection, returnToMain)
+                viewRoleTable(chooseTable, connection, returnToMain);
                 break;
             case "Add Roles":
 
@@ -39,6 +39,8 @@ const roleTable = (chooseTable, connection, returnToMain) => {
             case "Delete Role":
                 returnToMain();
                 displayRoleToDelete(chooseTable, connection, returnToMain)
+                break;
+
             case "Return To Main":
                 returnToMain();
                 chooseTable()
@@ -88,6 +90,7 @@ function addRoleTable(chooseTable, connection, returnToMain) {
             },
             function (err, res) {
                 if (err) throw err;
+                returnToMain();
                 console.log(res.affectedRows + " role inserted!\n");
                 // Call updateProduct AFTER the INSERT completes
                 viewRoleTable(chooseTable, connection, returnToMain)
@@ -150,6 +153,7 @@ function displayRoleToDelete(chooseTable, connection, returnToMain) {
                                 return next(err);
                                 roleTable(chooseTable, connection, returnToMain)
                             };
+                            returnToMain();
                             console.log(res.affectedRows + " role(s) deleted!\n");
                             // Call readProducts AFTER the DELETE completes
                             roleTable(chooseTable, connection, returnToMain)
